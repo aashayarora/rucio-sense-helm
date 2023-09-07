@@ -1,0 +1,798 @@
+# Default values for rucio.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## judgeCleanerCount gives the number of judge-cleaner pods to run
+abacusAccountCount: 0
+abacusCollectionReplicaCount: 0
+abacusRseCount: 0
+automatixCount: 0
+cacheConsumerCount: 0
+conveyorTransferSubmitterCount: 1
+conveyorPollerCount: 1
+conveyorFinisherCount: 1
+conveyorReceiverCount: 0
+conveyorStagerCount: 0
+conveyorThrottlerCount: 0
+conveyorPreparerCount: 1
+darkReaperCount: 0
+hermesCount: 0
+hermes2Count: 0
+judgeCleanerCount: 0
+judgeEvaluatorCount: 0
+judgeInjectorCount: 0
+judgeRepairerCount: 0
+oauthManagerCount: 0
+undertakerCount: 0
+reaperCount: 0
+transmogrifierCount: 0
+tracerKronosCount: 0
+minosCount: 0
+minosTemporaryExpirationCount: 0
+necromancerCount: 0
+
+image:
+  repository: aaarora/rucio-daemons
+  tag: release-1.29.11
+  pullPolicy: Always
+
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+
+exportConfigToEnv: True
+
+podLabels: {}
+podAnnotations: {}
+
+minReadySeconds: 5
+
+monitoring:
+  enabled: false
+  serviceMonitorEnabled: true
+  exporterPort: 8080
+  targetPort: 8080
+  interval: 30s
+  telemetryPath: /metrics
+  namespace: monitoring
+  labels:
+    release: prometheus-operator
+
+abacusAccount:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+abacusCollectionReplica:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+abacusRse:
+  fillHistoryTable: 0
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+automatix:
+  inputFile: /opt/rucio/etc/automatix.json
+  threads: 1
+  sleepTime: 1800
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+cacheConsumer:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "200Mi"
+      cpu: "700m"
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorTransferSubmitter:
+  threads: 1
+  podAnnotations: {}
+  groupBulk: 100
+  activities: "'Functional Test' 'User Subscriptions'"
+  archiveTimeout: ""
+  resources:
+    limits:
+      memory: "2Gi"
+      cpu: "1.0"
+    requests:
+      memory: "512Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorPoller:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorFinisher:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorReceiver:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorThrottler:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+conveyorPreparer:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+
+darkReaper:
+  workers: 1
+  chunkSize: "10"
+  scheme: ""
+  rses: ""
+  includeRses: ""
+  excludeRses: ""
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+hermes:
+  threads: 1
+  podAnnotations: {}
+  bulk: 100
+  delay: 10
+  brokerTimeout: 3
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+hermes2:
+  threads: 1
+  podAnnotations: {}
+  bulk: 1000
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+judgeCleaner:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+judgeEvaluator:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+judgeInjector:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+judgeRepairer:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+oauthManager:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "200Mi"
+      cpu: "700m"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+undertaker:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+reaper:
+  greedy: 1
+  scheme: ""
+  threads: 4
+  includeRses: ""
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+transmogrifier:
+  threads: 1
+    #bulk: 100
+    #sleepTime: 900
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+tracerKronos:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "200Mi"
+      cpu: "700m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+minos:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+minosTemporaryExpiration:
+  threads: 1
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+necromancer:
+  podAnnotations: {}
+  resources:
+    limits:
+      memory: "1Gi"
+      cpu: "1.0"
+    requests:
+      memory: "100Mi"
+      cpu: "100m"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
+
+ftsRenewal:
+  enabled: 1
+  schedule: "42 */6 * * *"
+  image:
+    repository: rucio/fts-cron
+    tag: latest
+    pullPolicy: Always
+  vo: "cms"
+  voms: "cms:/cms"
+  servers: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
+  additionalEnvs:
+    - name: RUCIO_FTS_SECRETS
+      value: rucio-daemons-rucio-x509up
+    - name: USERCERT_NAME
+      value: "usercert.pem"
+    - name: USERKEY_NAME
+      value: "new_userkey.pem"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+automaticRestart:
+  enabled: 1
+  image:
+    repository: bitnami/kubectl
+    tag: latest
+    pullPolicy: IfNotPresent
+      #schedule: "0 */12 * * *"
+      #schedule: "0 1 * * *"
+  # At 00:00 on Sunday
+  schedule: "0 0 * * 0"
+  selectorLabel: "app-group=rucio-daemons"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+additionalSecrets:
+  # gcssecret:
+  #   secretName: gcssecret
+  #   mountPath: /opt/rucio/etc/gcs_rucio.json
+  #   subPath: gcs_rucio.json
+  automatix-input:
+    secretName: automatix-input
+    mountPath: /opt/rucio/etc/automatix.json
+    subPath: automatix.json
+
+optional_config:
+  POLICY_PKG_PATH: "/opt/rucio/policy"
+
+## common config values used to configure the Rucio daemons
+config:
+  # accounts:
+    # special_accounts: "panda, tier0"
+
+  common:
+    ## config.common.logdir: the default directoy to write logs to (default: "/var/log/rucio")
+    # logdir: "/var/log/rucio"
+    ## config.common.logdir: the max loglevel (default: "DEBUG")
+    loglevel: "DEBUG"
+    ## config.common.mailtemplatedir: directory containing the mail templates (default: "/opt/rucio/etc/mail_templates")
+    # mailtemplatedir: "/opt/rucio/etc/mail_templates"
+  
+  # database:
+    ## config.database.default: the connection string for the database (default: "sqlite:////tmp/rucio.db")
+    # default: "sqlite:////tmp/rucio.db"
+    ## config.database.schema: the schema used in the DB. only necessary when using Oracle.
+    # schema: ""
+    ## config.database.pool_reset_on_return: set the “reset on return” behavior of the pool (default: "rollback")
+    # pool_reset_on_return: "rollback"
+    ## config.database.echo: flag to control the logging of all statements to stdout (default: "0")
+    # echo: "0"
+    ## config.database.po0l_recycle: this setting causes the pool to recycle connections after the given number of seconds has passed (default: "600")
+    # pool_recycle: "600"
+    ## config.database.pool_size: the number of connections to keep open inside the connection pool
+    # pool_size: ""
+    ## config.database.pool_timeout: number of seconds to wait before giving up on getting a connection from the pool
+    # pool_timeout: ""
+    ## config.database.maxoverflow: the number of connections to allow in connection pool "overflow"
+    # max_overflow: ""
+    ## config.database.powuseraccount: user used to check the DB
+    # powuseraccount: ""
+    ## config.database.powuseraccount: password for user used to check the DB
+    # powuserpassword: ""
+
+  # monitor:
+    ## config.monitor.carbon_server: address of carbon server used for graphite monitoring (default: "localhost")
+    # carbon_server: "localhost"
+    ## config.monitor.carbon_port: port of carbon server used for graphite monitoring (default: "8125")
+    # carbon_server: "8125"
+    ## config.monitor.user_scope: scope used on the graphite server (default: "default_docker")
+    # user_scope: "default_docker"
+
+  policy:
+    ## config.permission.policy: (default "generic")
+    permission: "cms"
+    # package: "gravcat_policy"
+    ## config.permission.schema: (default "generic")
+    schema: "cms"
+    ## config.permission.lfn2pfn_algorithm_default: (default "hash")
+    lfn2pfn_algorithm_default: "identity"
+    lfn2pfn_module: "CMSRucioPolicy"
+    #lfn2pfn_algorithm_default: "ldas_frames"
+    ## config.permission.support: (default "https://github.com/rucio/rucio/issues/")
+    support: "https://github.com/rucio/rucio/issues/"
+    # support: "https://git.ligo.org/rucio/gravcat-policy/-/issues"
+    ## config.permission.support_rucio: (default "https://github.com/rucio/rucio/issues/")
+    support_rucio: "https://github.com/rucio/rucio/issues/"
+    # support_rucio: "https://github.com/rucio/rucio/issues/"
+
+  conveyor:
+    use_preparer: "true"
+    scheme: "srm,gsiftp,root,http,https"
+    transfertool: "fts3"
+    sense: "true"
+    dmm_host: "nrp-01.nrp-nautilus.io"
+    ftshosts: "https://cmsftssrv3.fnal.gov:8446"
+      # , https://fts3-pilot.cern.ch:8446, https://fts3-pilot.cern.ch:8446"
+    cacert: "/opt/certs/ca.pem"
+    usercert: "/opt/proxy/x509up"
+    # cache_time: ""
+    # user_deterministic_id: ""
+    # poll_timeout: ""
+    # submit_timeout: ""
+    # bring_online: ""
+    # queue_mode: ""
+    # using_memcache: ""
+    # ftsmonhosts: ""
+
+  messaging-fts3:
+    port: "61123"
+    ssl_key_file: "/etc/grid-security/hostkey.pem"
+    ssl_cert_file: "/etc/grid-security/hostcert.pem"
+    use_ssl: "false"
+    destination: "/topic/transfer.fts_monitoring_queue_state"
+    brokers: "activemq"
+    voname: "cms"
+
+  messaging_hermes:
+    username: "hermes"
+    password: "supersecret"
+    port: "61613"
+    nonssl_port: "61613"
+    use_ssl: "false"
+    ssl_key_file: "/etc/grid-security/hostkey.pem"
+    ssl_cert_file: "/etc/grid-security/hostcert.pem"
+      #destination: "/topic/rucio.events"
+    destination: "/queue/events"
+    brokers: "activemq"
+    voname: "cms"
+    email_from: "Rucio <aaarora@ucsd.edu"
+    email_test: "aaarora@ucsd.edu"
+
+  # messaging_hermes2:
+    # elastic_endpoint:  # _bulk endpoint
+    # influxdb_endpoint: # write endpoint
+
+  tracer_kronos:
+    brokers: "activemq"
+    port: "61613"
+    ssl_key_file: "/etc/grid-security/hostkey.pem"
+    ssl_cert_file: "/etc/grid-security/hostcert.pem"
+    queue: "/queue/Consumer.kronos.rucio.tracer"
+    prefetch_size: "10"
+    chunksize: "10"
+    subscription_id: "rucio-tracer-listener"
+    use_ssl: "False"
+    reconnect_attempts: "100"
+    excluded_usrdns: ""
+    username: ""
+    password: ""
+    dataset_wait: "60"
+
+  # transmogrifier:
+    # maxdids: 100000
+
+  # messaging_cache:
+    # port: "61123"
+    # ssl_key_file: "/etc/grid-security/hostkey.pem"
+    # ssl_cert_file: "/etc/grid-security/hostcert.pem"
+    # destination: "/topic/rucio.cache"
+    # brokers: "dashb-test-mb.cern.ch"
+    # voname: "atlas"
+    # account: "ddm"
+
+  # credentials:
+    # gcs: "/opt/rucio/etc/google-cloud-storage-test.json"
+    # signature_lifetime: "3600"
+

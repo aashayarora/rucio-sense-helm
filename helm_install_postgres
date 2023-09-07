@@ -1,0 +1,143 @@
+#!/bin/bash -e
+
+############################################################
+# Help                                                     #
+############################################################
+Help()
+{
+   # Display Help
+   echo "helm_install_postgres.sh"
+   echo
+   echo "Install a new postgres instance for a Rucio backend database. Creates necessary secrets and Helm-installs the postgres chart."
+   echo
+   echo "Syntax: deploy_postgres.sh -[h|u <rucio_db_user>|d <rucio_db_name>|p <rucio_db_size>|d <postgres_deploy_name>]"
+   echo "options:"
+   echo "-h                         Print this Help."
+   echo "-n <rucio_db_name>         Rucio database name (default: rucio)."
+   echo "-u <rucio_db_user>         Rucio database user (default: rucio)."
+   echo "-s <rucio_db_schema>       Rucio database schema (default: prod)."
+   echo "-b <bootstrap_identity>        Rucio bootstrap user name (default: bootstrap)."
+   echo "-p <bootstrap_pwd>         Rucio bootstrap password (default: rucio-bootstrap)."
+   echo "-d <postgres_deploy_name>  Name of rucio database Helm deployment. (default: rucio)"
+   echo "-c <postgres_helm_chart>   PostgreSQL Helm chart. (default: bitnami/postgresql)"
+   echo "-v <postgres_values_yaml>  PostgreSQL Helm chart values.yaml. (default: postgres_values.yaml)"
+   echo
+}
+
+############################################################
+# Main                                                     #
+############################################################
+rucio_db_name="rucio"
+rucio_db_user="rucio"
+rucio_db_schema="prod"
+bootstrap_identity="bootstrap"
+bootstrap_pwd="rucio-bootstrap"
+postgres_deploy_name="rucio-db"
+postgres_helm_chart="bitnami/postgresql"
+postgres_values_yaml="postgres_values.yaml"
+while getopts "h:n:u:d:c:v:" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      n) # set rucio_db_name
+        rucio_db_name=${OPTARG};;
+      u) # set rucio_db_user
+        rucio_db_user=${OPTARG};;
+      b) # set bootstrap user
+        bootstrap_identity=${OPTARG};;
+      p) # set bootstrap password
+        bootstrap_pwd=${OPTARG};;
+      d) # set Deployment name
+        postgres_deploy_name=${OPTARG};;
+      c) # postgres_helm_chart
+        postgres_helm_chart=${OPTARG};;
+      v) # postgres_values.yaml
+        postgres_values_yaml=${OPTARG};;
+      \?) 
+        Help
+        exit;;
+   esac
+ done
+
+# Check for existing postgres deployment
+if helm status ${postgres_deploy_name} &> /dev/null; then
+  echo "Warning: postgreSQL deployment: ${postgres_deploy_name} already exists"
+  echo "...Will apply upgrade"
+fi
+
+# Check for values.yaml
+if [ ! -f ${postgres_values_yaml} ]; then
+  echo "Error: Helm values.yaml file '${postgres_values_yaml}' not found"
+  exit 1
+fi
+
+# User
+echo "Rucio DB user: ${rucio_db_user}"
+echo "Rucio DB name: ${rucio_db_name}"
+echo "Will deploy postgres to: ${postgres_deploy_name}-postgresql (etc)"
+echo "Postgres Helm values: ${postgres_values_yaml}"
+
+# Password (required)
+if [ -z ${RUCIO_DB_PASS} ]; then
+  echo "RUCIO_DB_PASS is unset, either ctrl-C and set that variable or enter now:"
+  read -s rucio_db_pwd
+else 
+  rucio_db_pwd=${RUCIO_DB_PASS}
+fi
+echo "Rucio DB password acquired"
+
+# Base64-encode SQL scripts
+create_rucio_db=$(echo "CREATE DATABASE ${rucio_db_name};")
+create_rucio_user=$(echo "CREATE USER ${rucio_db_user} WITH ENCRYPTED PASSWORD '${rucio_db_pwd}';")
+grant_user_privileges=$(echo "GRANT ALL PRIVILEGES ON DATABASE ${rucio_db_name} to ${rucio_db_user};")
+
+######################################
+# Deploy secrets                     #
+######################################
+
+# Generate initdb secret
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+data:
+  create-rucio-db.sql: $(echo ${create_rucio_db} | base64)
+  create-rucio-user.sql: $(echo ${create_rucio_user} | base64)
+  grant-user-privileges.sql: $(echo ${grant_user_privileges} | base64)
+kind: Secret
+metadata:
+  name: postgres-initdb-scripts
+type: Opaque
+EOF
+
+# Generate user/password secret for init pod
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+data:
+  rucio-cfg-database-default: $(echo postgresql://${rucio_db_user}:${rucio_db_pwd}@${postgres_deploy_name}-postgresql/${rucio_db_name} | base64)
+  rucio-db-user: $(echo ${rucio_db_name} | base64)
+  rucio-db-name: $(echo ${rucio_db_user} | base64)
+  rucio-db-schema: $(echo ${rucio_db_schema} | base64)
+  rucio-db-pwd: $(echo ${rucio_db_pwd} | base64)
+  rucio-db-bootstrap-identity: $(echo ${bootstrap_identity} | base64)
+  rucio-db-bootstrap-pwd: $(echo ${bootstrap_pwd} | base64)
+  rucio-db-hostname: $(echo ${postgres_deploy_name}-postgresql | base64)
+kind: Secret
+metadata:
+  name: rucio-db-init-secrets
+type: Opaque
+EOF
+
+######################################
+# Deploy postgres                    #
+######################################
+
+if ! helm status ${postgres_deploy_name} &> /dev/null; then
+  # Helm install postgres
+  echo "Installing Postgres helm chart:"
+  helm install ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
+else
+  echo "Upgrading Postgres helm chart:"
+  helm upgrade ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
+fi
+
+

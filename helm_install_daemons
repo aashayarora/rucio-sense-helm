@@ -1,0 +1,128 @@
+#!/bin/bash -e
+
+############################################################
+# Help                                                     #
+############################################################
+Help()
+{
+   # Display Help
+   echo "helm_install_rucio_daemons"
+   echo
+   echo "Helm-deploy rucio daemons"
+   echo
+   echo "Syntax: helm_install_rucio_daemons -[h|u <rucio_db_user>|d <rucio_db_name>|p <rucio_db_size>|d <daemons_deploy_name>]"
+   echo "options:"
+   echo "-h                        Print this Help."
+   echo "-d <daemons_deploy_name>  Name of rucio daemons Helm deployment. (default: rucio)"
+   echo "-c <daemons_helm_chart>   Daemons Helm chart. (default: rucio/rucio-daemons)"
+   echo "-v <daemons_values_yaml>  Daemons Helm chart values.yaml. (default: daemons_values.yaml)"
+   echo
+}
+
+
+############################################################
+# Main                                                     #
+############################################################
+daemons_deploy_name="rucio-daemons"
+daemons_helm_chart="rucio/rucio-daemons"
+daemons_values_yaml="daemons_values.yaml"
+
+client_user="admin"
+client_account="root"
+client_passwd=""
+
+while getopts "h:n:u:d:c:v:" option; do
+   case $option in
+      h) # display Help
+         Help
+         exit;;
+      d) # set Deployment name
+        daemons_deploy_name=${OPTARG};;
+      c) # server_helm_chart
+        daemons_helm_chart=${OPTARG};;
+      v) # server_values.yaml
+        daemons_values_yaml=${OPTARG};;
+      \?) 
+        Help
+        exit;;
+   esac
+ done
+
+# Check for existing postgres deployment
+if helm status ${daemons_deploy_name} &> /dev/null; then
+  echo "Warning: rucio-daemons deployment: ${daemons_deploy_name} already exists"
+  echo "...Will apply upgrade"
+fi
+
+# Check for values.yaml
+if [ ! -f ${daemons_values_yaml} ]; then
+  echo "Error: Helm values.yaml file '${daemons_values_yaml}' not found"
+  exit 1
+fi
+
+
+# Create secret for FTS cert
+USERCERT=$(base64 -w0 secrets/usercert.pem)
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+data:
+  usercert.pem: ${USERCERT}
+kind: Secret
+metadata:
+  name: ${daemons_deploy_name}-fts-cert
+type: Opaque
+EOF
+
+# Create secret for FTS key
+USERKEY=$(base64 -w0 secrets/userkey.pem)
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+data:
+  new_userkey.pem: ${USERKEY}
+kind: Secret
+metadata:
+  name: ${daemons_deploy_name}-fts-key
+type: Opaque
+EOF
+
+# FIXME Add CA bundler job
+
+# Extract db secrets for server deployment
+database_default=$(kubectl get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-cfg-database-default}' | base64 -d)
+schema=$(kubectl get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-db-schema}' | base64 -d)
+
+# Create or apply the automatix secret so pods start
+echo "Creating preliminary automatix configuration"
+kubectl create secret generic ${daemons_deploy_name}-automatix-input \
+  --save-config \
+  --dry-run=client \
+  --from-file=automatix.json \
+  -o yaml | \
+  kubectl apply -f -
+
+### Deploy Helm chart ###
+if ! helm status ${daemons_deploy_name} &> /dev/null; then
+
+
+  # Helm install rucio daemons
+  echo "Installing Rucio daemons helm chart:"
+
+  helm install ${daemons_deploy_name} ${daemons_helm_chart} -f ${daemons_values_yaml} \
+    --set config.database.default=${database_default} --set config.database.schema=${schema} \
+    --set config.client.rucio_host=http://rucio-server --set config.client.auth_host=http://rucio-server-auth \
+    --set config.client.ca_cert=/etc/pki/tls/certs/ca-bundle.crt \
+    --set config.client.auth_type=userpass --set config.client.username=${client_user} --set config.client.password=${client_passwd} --set config.client.account=${client_account} \
+    --version 1.30.12
+
+else
+  echo "Upgrading Rucio daemons helm chart:"
+
+  helm upgrade ${daemons_deploy_name} ${daemons_helm_chart} -f ${daemons_values_yaml} \
+    --set config.database.default=${database_default} --set config.database.schema=${schema} \
+    --set config.client.rucio_host=http://rucio-server --set config.client.auth_host=http://rucio-server-auth \
+    --set config.client.ca_cert=/etc/pki/tls/certs/ca-bundle.crt \
+    --set config.client.auth_type=userpass --set config.client.username=${client_user} --set config.client.password=${client_passwd} --set config.client.account=${client_account} \
+    --version 1.30.12
+fi
+  
+

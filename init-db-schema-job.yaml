@@ -1,0 +1,66 @@
+--- 
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rucio-init-db
+  labels:
+    app: rucio
+spec:
+  ttlSecondsAfterFinished: 10
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+      - name: postgres-ready
+        image: postgres:12
+        command: ["sh", "-c", "until pg_isready -h ${RUCIO_DB_HOST} -U ${RUCIO_DB_USER} -p 5432; do echo Waiting for postgresql...; sleep 2; done" ]
+        env:
+          - name: RUCIO_DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: rucio-db-init-secrets
+                key: rucio-db-hostname
+          - name: RUCIO_DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: rucio-db-init-secrets
+                key: rucio-db-user
+      containers:
+        - name: init
+          image: rucio/rucio-init:release-1.29.11
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          env:
+            - name: RUCIO_CFG_DATABASE_DEFAULT
+              valueFrom:
+                secretKeyRef:
+                  name: rucio-db-init-secrets
+                  key: rucio-cfg-database-default
+                  optional: false
+            - name: RUCIO_CFG_DATABASE_SCHEMA
+              valueFrom:
+                secretKeyRef:
+                  name: rucio-db-init-secrets
+                  key: rucio-db-schema
+                  optional: false
+            - name: RUCIO_CFG_BOOTSTRAP_USERPASS_IDENTITY
+              valueFrom:
+                secretKeyRef:
+                  name: rucio-db-init-secrets
+                  key: rucio-db-bootstrap-identity
+                  optional: false
+            - name: RUCIO_CFG_BOOTSTRAP_USERPASS_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: rucio-db-init-secrets
+                  key: rucio-db-bootstrap-pwd
+                  optional: false
+            - name: RUCIO_PRINT_CFG
+              value: "true"

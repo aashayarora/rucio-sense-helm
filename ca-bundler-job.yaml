@@ -1,0 +1,54 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+ name: rucio-ca-bundler
+ labels:
+   app: rucio
+spec:
+ ttlSecondsAfterFinished: 10
+ template:
+   spec:
+     restartPolicy: Never
+     serviceAccountName: rucio-kubectl
+     containers:
+     - name: rucio-server-rucio-ca-bundle
+       image: containers.ligo.org/computing/rucio/containers/ca-bundler
+       imagePullPolicy: Always
+       resources:
+         limits:
+           cpu: 500m
+           memory: 256Mi
+         requests:
+           cpu: 100m
+           memory: 128Mi
+       env:
+         - name: CA_BUNDLE_SECRET_NAME
+           value: "rucio-server-rucio-ca-bundle"
+     - name: rucio-daemons-rucio-ca-bundle
+       image: containers.ligo.org/computing/rucio/containers/ca-bundler
+       imagePullPolicy: Always
+       resources:
+         limits:
+           cpu: 500m
+           memory: 256Mi
+         requests:
+           cpu: 100m
+           memory: 128Mi
+       env:
+         - name: CA_BUNDLE_SECRET_NAME
+           value: "rucio-daemons-rucio-ca-bundle"
+     - name: rucio-daemons-rucio-ca-bundle-reaper
+       image: containers.ligo.org/computing/rucio/containers/ca-bundler
+       imagePullPolicy: Always
+       resources:
+         limits:
+           cpu: 500m
+           memory: 256Mi
+         requests:
+           cpu: 100m
+           memory: 128Mi
+       env:
+         - name: CA_BUNDLE_SECRET_NAME
+           value: "rucio-daemons-rucio-ca-bundle-reaper"
+

@@ -30,12 +30,10 @@ useSSL:
 
 image:
   repository: aaarora/rucio-server
-  tag: release-1.29.11
+  tag: release-33.0.0
   pullPolicy: Always
 
 additionalEnvs:
-  - name: POLICY_PKG_PATH
-    value: /opt/rucio/policy
   - name: RUCIO_HTTPD_ENCODED_SLASHES
     value: "True"
 
@@ -130,9 +128,6 @@ ftsRenewal:
   vo: "cms"
   voms: "cms:/cms"
   servers: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
-  #vo: "Virgo"
-  #voms: "virgo:/virgo/virgo"
-  #servers: "https://fts.mwt2.org:8446"
   additionalEnvs:
     - name: RUCIO_FTS_SECRETS
       value: rucio-server-rucio-x509up
@@ -147,6 +142,15 @@ ftsRenewal:
     requests:
       cpu: 100m
       memory: 256Mi
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
 
 automaticRestart:
   enabled: 1
@@ -296,6 +300,9 @@ httpd_config:
   # max_clients: "20"
   # max_requests_per_child: "8192"
 
+optional_config:
+  policy_pkg_path: "/opt/rucio/policy"
+
 ## values used to configure Rucio
 config:
   common:
@@ -312,8 +319,7 @@ config:
     transfertool: "fts3"
     sense: "true"
     dmm_host: "nrp-01.nrp-nautilus.io"
-    ftshosts: "https://cmsftssrv3.fnal.gov:8446"
-      # , https://fts3-pilot.cern.ch:8446, https://fts3-pilot.cern.ch:8446"
+    ftshosts: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
     cacert: "/opt/certs/ca.pem"
     usercert: "/opt/proxy/x509up"
   
@@ -365,21 +371,9 @@ config:
     password: "supersecret"
 
   policy:
-    ## config.permission.policy: (default "generic")
     permission: "cms"
-    # package: "gravcat_policy"
-    ## config.permission.schema: (default "generic")
-    schema: "cms"
-    ## config.permission.lfn2pfn_algorithm_default: (default "hash")
+    package: "CMSRucioPolicy"
     lfn2pfn_algorithm_default: "identity"
-    lfn2pfn_module: "CMSRucioPolicy"
-    #lfn2pfn_algorithm_default: "ldas_frames"
-    ## config.permission.support: (default "https://github.com/rucio/rucio/issues/")
-    support: "https://github.com/rucio/rucio/issues/"
-    # support: "https://git.ligo.org/rucio/gravcat-policy/-/issues"
-    ## config.permission.support_rucio: (default "https://github.com/rucio/rucio/issues/")
-    support_rucio: "https://github.com/rucio/rucio/issues/"
-    # support_rucio: "https://github.com/rucio/rucio/issues/"
 
   ## Only necessary for webui deployments
   # webui:

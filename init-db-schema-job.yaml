@@ -28,7 +28,7 @@ spec:
                 key: rucio-db-user
       containers:
         - name: init
-          image: rucio/rucio-init:release-1.29.11
+          image: rucio/rucio-init:release-33.0.0
           imagePullPolicy: Always
           resources:
             limits:
@@ -64,3 +64,6 @@ spec:
                   optional: false
             - name: RUCIO_PRINT_CFG
               value: "true"
+      nodeSelector:
+        kubernetes.io/hostname: nrp-04.nrp-nautilus.io 
+

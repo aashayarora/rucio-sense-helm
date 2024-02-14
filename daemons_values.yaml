@@ -33,7 +33,7 @@ necromancerCount: 0
 
 image:
   repository: aaarora/rucio-daemons
-  tag: release-1.29.11
+  tag: release-33.0.0
   pullPolicy: Always
 
 strategy:
@@ -166,7 +166,8 @@ cacheConsumer:
 conveyorTransferSubmitter:
   threads: 1
   podAnnotations: {}
-  groupBulk: 100
+  bulk: 1000
+  groupBulk: 500
   activities: "'Functional Test' 'User Subscriptions'"
   archiveTimeout: ""
   resources:
@@ -189,6 +190,7 @@ conveyorTransferSubmitter:
 conveyorPoller:
   threads: 1
   podAnnotations: {}
+  bulk: 1000
   resources:
     limits:
       memory: "1Gi"
@@ -209,6 +211,7 @@ conveyorPoller:
 conveyorFinisher:
   threads: 1
   podAnnotations: {}
+  bulk: 1000
   resources:
     limits:
       memory: "1Gi"
@@ -249,6 +252,7 @@ conveyorReceiver:
 conveyorThrottler:
   threads: 1
   podAnnotations: {}
+  bulk: 1000
   resources:
     limits:
       memory: "1Gi"
@@ -269,6 +273,7 @@ conveyorThrottler:
 conveyorPreparer:
   threads: 1
   podAnnotations: {}
+  bulk: 1000
   resources:
     limits:
       memory: "1Gi"
@@ -624,6 +629,15 @@ ftsRenewal:
     requests:
       cpu: 100m
       memory: 256Mi
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: nautilus.io/rack
+              operator: In
+              values:
+                - "AA36"
 
 automaticRestart:
   enabled: 1
@@ -655,7 +669,7 @@ additionalSecrets:
     subPath: automatix.json
 
 optional_config:
-  POLICY_PKG_PATH: "/opt/rucio/policy"
+  policy_pkg_path: "/opt/rucio/policy"
 
 ## common config values used to configure the Rucio daemons
 config:
@@ -701,30 +715,19 @@ config:
     # user_scope: "default_docker"
 
   policy:
-    ## config.permission.policy: (default "generic")
     permission: "cms"
-    # package: "gravcat_policy"
-    ## config.permission.schema: (default "generic")
-    schema: "cms"
-    ## config.permission.lfn2pfn_algorithm_default: (default "hash")
+    package: "CMSRucioPolicy"
     lfn2pfn_algorithm_default: "identity"
-    lfn2pfn_module: "CMSRucioPolicy"
-    #lfn2pfn_algorithm_default: "ldas_frames"
-    ## config.permission.support: (default "https://github.com/rucio/rucio/issues/")
-    support: "https://github.com/rucio/rucio/issues/"
-    # support: "https://git.ligo.org/rucio/gravcat-policy/-/issues"
-    ## config.permission.support_rucio: (default "https://github.com/rucio/rucio/issues/")
-    support_rucio: "https://github.com/rucio/rucio/issues/"
-    # support_rucio: "https://github.com/rucio/rucio/issues/"
+  
+  dmm:
+    url: "http://nrp-01.nrp-nautilus.io"
+    use_sense: "true"
 
   conveyor:
     use_preparer: "true"
     scheme: "srm,gsiftp,root,http,https"
     transfertool: "fts3"
-    sense: "true"
-    dmm_host: "nrp-01.nrp-nautilus.io"
-    ftshosts: "https://cmsftssrv3.fnal.gov:8446"
-      # , https://fts3-pilot.cern.ch:8446, https://fts3-pilot.cern.ch:8446"
+    ftshosts: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
     cacert: "/opt/certs/ca.pem"
     usercert: "/opt/proxy/x509up"
     # cache_time: ""

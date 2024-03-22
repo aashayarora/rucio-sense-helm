@@ -4,6 +4,8 @@
 helm uninstall rucio-server && helm uninstall rucio-daemons && helm uninstall rucio-db 
 kubectl delete job rucio-server-renew-fts-proxy-on-helm-install
 kubectl delete job rucio-daemons-renew-fts-proxy-on-helm-install
+kubectl delete secret rucio-daemons-rucio-x509up
+kubectl delete secret rucio-server-rucio-x509up
 
 # Deploy Database
 ./helm_install_postgres

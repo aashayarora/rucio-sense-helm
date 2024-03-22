@@ -147,10 +147,10 @@ ftsRenewal:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 automaticRestart:
   enabled: 1
@@ -412,7 +412,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
         - matchExpressions:
-          - key: nautilus.io/rack
+          - key: kubernetes.io/hostname
             operator: In
             values:
-              - "AA36"
+              - "k8s-gen4-02.sdsc.optiputer.net"

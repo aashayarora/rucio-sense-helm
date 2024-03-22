@@ -75,10 +75,10 @@ abacusAccount:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 abacusCollectionReplica:
   threads: 1
@@ -95,10 +95,10 @@ abacusCollectionReplica:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 abacusRse:
   fillHistoryTable: 0
@@ -116,10 +116,10 @@ abacusRse:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 automatix:
   inputFile: /opt/rucio/etc/automatix.json
@@ -138,10 +138,10 @@ automatix:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 cacheConsumer:
   threads: 1
@@ -158,10 +158,10 @@ cacheConsumer:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorTransferSubmitter:
   threads: 1
@@ -182,10 +182,10 @@ conveyorTransferSubmitter:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorPoller:
   threads: 1
@@ -203,10 +203,10 @@ conveyorPoller:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorFinisher:
   threads: 1
@@ -224,10 +224,10 @@ conveyorFinisher:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorReceiver:
   threads: 1
@@ -244,10 +244,10 @@ conveyorReceiver:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorThrottler:
   threads: 1
@@ -265,10 +265,10 @@ conveyorThrottler:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 conveyorPreparer:
   threads: 1
@@ -286,10 +286,10 @@ conveyorPreparer:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 
 darkReaper:
@@ -312,10 +312,10 @@ darkReaper:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 hermes:
   threads: 1
@@ -335,10 +335,10 @@ hermes:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 hermes2:
   threads: 1
@@ -356,10 +356,10 @@ hermes2:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 judgeCleaner:
   threads: 1
@@ -376,10 +376,10 @@ judgeCleaner:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 judgeEvaluator:
   threads: 1
@@ -396,10 +396,10 @@ judgeEvaluator:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 judgeInjector:
   threads: 1
@@ -416,10 +416,10 @@ judgeInjector:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 judgeRepairer:
   threads: 1
@@ -436,10 +436,10 @@ judgeRepairer:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 oauthManager:
   threads: 1
@@ -456,10 +456,10 @@ oauthManager:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 undertaker:
   threads: 1
@@ -476,10 +476,10 @@ undertaker:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 reaper:
   greedy: 1
@@ -499,10 +499,10 @@ reaper:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 transmogrifier:
   threads: 1
@@ -521,10 +521,10 @@ transmogrifier:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 tracerKronos:
   threads: 1
@@ -541,10 +541,10 @@ tracerKronos:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 minos:
   threads: 1
@@ -561,10 +561,10 @@ minos:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 minosTemporaryExpiration:
   threads: 1
@@ -581,10 +581,10 @@ minosTemporaryExpiration:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 necromancer:
   podAnnotations: {}
@@ -600,10 +600,10 @@ necromancer:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 ftsRenewal:
   enabled: 1
@@ -634,10 +634,10 @@ ftsRenewal:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
           - matchExpressions:
-            - key: nautilus.io/rack
+            - key: kubernetes.io/hostname
               operator: In
               values:
-                - "AA36"
+                - "k8s-gen4-02.sdsc.optiputer.net"
 
 automaticRestart:
   enabled: 1

@@ -607,7 +607,7 @@ necromancer:
 
 ftsRenewal:
   enabled: 1
-  schedule: "42 */6 * * *"
+  schedule: "*/30 * * * *"
   image:
     repository: rucio/fts-cron
     tag: latest

@@ -30,7 +30,7 @@ useSSL:
 
 image:
   repository: aaarora/rucio-server
-  tag: release-33.0.0
+  tag: release-32.8.2
   pullPolicy: Always
 
 additionalEnvs:

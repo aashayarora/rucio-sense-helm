@@ -33,7 +33,7 @@ necromancerCount: 0
 
 image:
   repository: aaarora/rucio-daemons
-  tag: release-33.0.0
+  tag: release-32.8.2
   pullPolicy: Always
 
 strategy:

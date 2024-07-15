@@ -28,7 +28,7 @@ spec:
                 key: rucio-db-user
       containers:
         - name: init
-          image: rucio/rucio-init:release-33.0.0
+          image: rucio/rucio-init:release-32.8.2
           imagePullPolicy: Always
           resources:
             limits:

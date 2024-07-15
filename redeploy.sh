@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export RUCIO_DB_PASS='sense-rucio'
+
 # Remove all previous deployment artifacts.
 helm uninstall rucio-server && helm uninstall rucio-daemons && helm uninstall rucio-db 
 kubectl delete job rucio-server-renew-fts-proxy-on-helm-install

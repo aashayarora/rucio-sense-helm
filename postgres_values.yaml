@@ -18,12 +18,10 @@ primary:
     requests:
       memory: "4Gi"
       cpu: "500m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: nautilus.io/rack
-              operator: In
-              values:
-                - "AA36"
+  nodeSelector:
+    kubernetes.io/hostname: stashcache.t2.ucsd.edu  
+  tolerations:
+    - key: "nautilus.io/stashcache"
+      operator: "Exists"
+      effect: "NoSchedule"
+

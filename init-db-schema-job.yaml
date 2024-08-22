@@ -10,6 +10,10 @@ spec:
   backoffLimit: 0
   template:
     spec:
+      tolerations:
+      - key: "nautilus.io/stashcache"
+        operator: "Exists"
+        effect: "NoSchedule"
       restartPolicy: Never
       initContainers:
       - name: postgres-ready
@@ -65,5 +69,4 @@ spec:
             - name: RUCIO_PRINT_CFG
               value: "true"
       nodeSelector:
-        kubernetes.io/hostname: nrp-04.nrp-nautilus.io 
-
+        kubernetes.io/hostname: stashcache.t2.ucsd.edu

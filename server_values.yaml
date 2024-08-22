@@ -37,6 +37,14 @@ additionalEnvs:
   - name: RUCIO_HTTPD_ENCODED_SLASHES
     value: "True"
 
+tolerations:
+  - key: "nautilus.io/stashcache"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+nodeSelector:
+  kubernetes.io/hostname: stashcache.t2.ucsd.edu
+
 service:
   type: ClusterIP
   port: 80
@@ -142,15 +150,7 @@ ftsRenewal:
     requests:
       cpu: 100m
       memory: 256Mi
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 automaticRestart:
   enabled: 1
@@ -205,10 +205,10 @@ ingress:
   path: /
   hosts:
   #   - my.rucio.test
-     - rucio-sense.dev.nrp-nautilus.io
+     - rucio-sense.nrp-nautilus.io
   tls:
     - hosts:
-      - rucio-sense.dev.nrp-nautilus.io
+      - rucio-sense.nrp-nautilus.io
         #- secretName: rucio-server.tls-secret
   secrets:
   ## If you're providing your own certificates, please use this to add the certificates as secrets
@@ -237,12 +237,12 @@ authIngress:
     # traefik.ingress.kubernetes.io/redirect-entry-point: https
   path: /auth
   hosts:
-     - rucio-sense-auth.dev.nrp-nautilus.io
+     - rucio-sense-auth.nrp-nautilus.io
   #   - my.rucio.test
   tls:
   #   - secretName: rucio-auth.tls-secret
     - hosts:
-      - rucio-sense-auth.dev.nrp-nautilus.io
+      - rucio-sense-auth.nrp-nautilus.io
   secrets:
   ## If you're providing your own certificates, please use this to add the certificates as secrets
   ## key and certificate should start with -----BEGIN CERTIFICATE----- or
@@ -404,15 +404,3 @@ traceServerResources: {}
   #  memory: 128Mi
 
 nodeSelector: {}
-
-tolerations: []
-
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-              - "k8s-gen4-02.sdsc.optiputer.net"

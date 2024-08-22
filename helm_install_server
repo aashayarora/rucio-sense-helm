@@ -97,5 +97,3 @@ else
     --set config.database.default=${database_default} --set config.database.schema=${schema} \
     --version 1.30.13
 fi
-  
-

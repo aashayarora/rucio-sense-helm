@@ -70,15 +70,7 @@ abacusAccount:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 abacusCollectionReplica:
   threads: 1
@@ -90,15 +82,7 @@ abacusCollectionReplica:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 abacusRse:
   fillHistoryTable: 0
@@ -111,15 +95,7 @@ abacusRse:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 automatix:
   inputFile: /opt/rucio/etc/automatix.json
@@ -133,15 +109,7 @@ automatix:
     requests:
       memory: "100Mi"
       cpu: "100m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 cacheConsumer:
   threads: 1
@@ -153,15 +121,7 @@ cacheConsumer:
     requests:
       memory: "100Mi"
       cpu: "100m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 conveyorTransferSubmitter:
   threads: 1
@@ -172,20 +132,19 @@ conveyorTransferSubmitter:
   archiveTimeout: ""
   resources:
     limits:
-      memory: "2Gi"
-      cpu: "1.0"
+      memory: "8Gi"
+      cpu: "8.0"
     requests:
-      memory: "512Mi"
-      cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+      memory: "2Gi"
+      cpu: "2.0"
+  tolerations:
+  - key: "nautilus.io/stashcache"
+    operator: "Exists"
+    effect: "NoSchedule"
+  nodeSelector:
+    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
+    
+  
 
 conveyorPoller:
   threads: 1
@@ -193,20 +152,18 @@ conveyorPoller:
   bulk: 1000
   resources:
     limits:
-      memory: "1Gi"
-      cpu: "1.0"
+      memory: "8Gi"
+      cpu: "8.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+      memory: "2Gi"
+      cpu: "2.0"
+  tolerations:
+  - key: "nautilus.io/stashcache"
+    operator: "Exists"
+    effect: "NoSchedule"
+  nodeSelector:
+    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
+  
 
 conveyorFinisher:
   threads: 1
@@ -214,20 +171,18 @@ conveyorFinisher:
   bulk: 1000
   resources:
     limits:
-      memory: "1Gi"
-      cpu: "1.0"
+      memory: "8Gi"
+      cpu: "8.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+      memory: "2Gi"
+      cpu: "2.0"
+  tolerations:
+  - key: "nautilus.io/stashcache"
+    operator: "Exists"
+    effect: "NoSchedule"
+  nodeSelector:
+    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
+  
 
 conveyorReceiver:
   threads: 1
@@ -239,15 +194,7 @@ conveyorReceiver:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 conveyorThrottler:
   threads: 1
@@ -260,15 +207,7 @@ conveyorThrottler:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 conveyorPreparer:
   threads: 1
@@ -276,20 +215,18 @@ conveyorPreparer:
   bulk: 1000
   resources:
     limits:
-      memory: "1Gi"
-      cpu: "1.0"
+      memory: "8Gi"
+      cpu: "8.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+      memory: "2Gi"
+      cpu: "2.0"
+  tolerations:
+  - key: "nautilus.io/stashcache"
+    operator: "Exists"
+    effect: "NoSchedule"
+  nodeSelector:
+    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
+  
 
 
 darkReaper:
@@ -307,15 +244,7 @@ darkReaper:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 hermes:
   threads: 1
@@ -330,15 +259,7 @@ hermes:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 hermes2:
   threads: 1
@@ -351,15 +272,7 @@ hermes2:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 judgeCleaner:
   threads: 1
@@ -371,15 +284,7 @@ judgeCleaner:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 judgeEvaluator:
   threads: 1
@@ -391,15 +296,7 @@ judgeEvaluator:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 judgeInjector:
   threads: 1
@@ -411,15 +308,7 @@ judgeInjector:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 judgeRepairer:
   threads: 1
@@ -431,15 +320,7 @@ judgeRepairer:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 oauthManager:
   threads: 1
@@ -451,15 +332,7 @@ oauthManager:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 undertaker:
   threads: 1
@@ -471,15 +344,7 @@ undertaker:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 reaper:
   greedy: 1
@@ -494,15 +359,7 @@ reaper:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 transmogrifier:
   threads: 1
@@ -516,15 +373,7 @@ transmogrifier:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 tracerKronos:
   threads: 1
@@ -536,15 +385,7 @@ tracerKronos:
     requests:
       memory: "200Mi"
       cpu: "700m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 minos:
   threads: 1
@@ -556,15 +397,7 @@ minos:
     requests:
       memory: "100Mi"
       cpu: "100m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 minosTemporaryExpiration:
   threads: 1
@@ -576,15 +409,7 @@ minosTemporaryExpiration:
     requests:
       memory: "100Mi"
       cpu: "100m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 necromancer:
   podAnnotations: {}
@@ -595,15 +420,7 @@ necromancer:
     requests:
       memory: "100Mi"
       cpu: "100m"
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 ftsRenewal:
   enabled: 1
@@ -629,15 +446,7 @@ ftsRenewal:
     requests:
       cpu: 100m
       memory: 256Mi
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: kubernetes.io/hostname
-              operator: In
-              values:
-                - "k8s-gen4-02.sdsc.optiputer.net"
+  
 
 automaticRestart:
   enabled: 1
@@ -720,7 +529,7 @@ config:
     lfn2pfn_algorithm_default: "identity"
   
   dmm:
-    url: "http://nrp-01.nrp-nautilus.io"
+    url: "http://dmm.nrp-nautilus.io"
     use_sense: "true"
 
   conveyor:
@@ -798,4 +607,3 @@ config:
   # credentials:
     # gcs: "/opt/rucio/etc/google-cloud-storage-test.json"
     # signature_lifetime: "3600"
-

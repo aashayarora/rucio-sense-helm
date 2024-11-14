@@ -318,7 +318,7 @@ config:
     scheme: "srm,gsiftp,root,http,https"
     transfertool: "fts3"
     sense: "true"
-    dmm_host: "nrp-01.nrp-nautilus.io"
+    dmm_host: "dmm.nrp-nautilus.io"
     ftshosts: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
     cacert: "/opt/certs/ca.pem"
     usercert: "/opt/proxy/x509up"

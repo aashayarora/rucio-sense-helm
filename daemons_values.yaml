@@ -68,8 +68,8 @@ abacusAccount:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 abacusCollectionReplica:
@@ -80,8 +80,8 @@ abacusCollectionReplica:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 abacusRse:
@@ -93,8 +93,8 @@ abacusRse:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 automatix:
@@ -107,8 +107,8 @@ automatix:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "100Mi"
-      cpu: "100m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 cacheConsumer:
@@ -116,11 +116,11 @@ cacheConsumer:
   podAnnotations: {}
   resources:
     limits:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "100Mi"
-      cpu: "100m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 conveyorTransferSubmitter:
@@ -128,23 +128,22 @@ conveyorTransferSubmitter:
   podAnnotations: {}
   bulk: 1000
   groupBulk: 500
-  activities: "'Functional Test' 'User Subscriptions'"
+  activities: "'Functional Test' 'User Subscriptions' 'SENSE Test'"
   archiveTimeout: ""
   resources:
     limits:
-      memory: "8Gi"
-      cpu: "8.0"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "2Gi"
-      cpu: "2.0"
-  tolerations:
-  - key: "nautilus.io/stashcache"
-    operator: "Exists"
-    effect: "NoSchedule"
+      memory: "1Gi"
+      cpu: "1.0"
   nodeSelector:
-    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
-    
-  
+    kubernetes.io/hostname: "ucsd-nrp.cern.ch"
+  tolerations:
+  - key: "nautilus.io/reservation"
+    value: "sense"
+    operator: "Equal"
+    effect: "NoSchedule"
 
 conveyorPoller:
   threads: 1
@@ -152,38 +151,37 @@ conveyorPoller:
   bulk: 1000
   resources:
     limits:
-      memory: "8Gi"
-      cpu: "8.0"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "2Gi"
-      cpu: "2.0"
-  tolerations:
-  - key: "nautilus.io/stashcache"
-    operator: "Exists"
-    effect: "NoSchedule"
+      memory: "1Gi"
+      cpu: "1.0"
   nodeSelector:
-    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
-  
-
+    kubernetes.io/hostname: "ucsd-nrp.cern.ch"
+  tolerations:
+  - key: "nautilus.io/reservation"
+    value: "sense"
+    operator: "Equal"
+    effect: "NoSchedule"
+    
 conveyorFinisher:
   threads: 1
   podAnnotations: {}
   bulk: 1000
   resources:
     limits:
-      memory: "8Gi"
-      cpu: "8.0"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "2Gi"
-      cpu: "2.0"
-  tolerations:
-  - key: "nautilus.io/stashcache"
-    operator: "Exists"
-    effect: "NoSchedule"
+      memory: "1Gi"
+      cpu: "1.0"
   nodeSelector:
-    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
-  
-
+    kubernetes.io/hostname: "ucsd-nrp.cern.ch"
+  tolerations:
+  - key: "nautilus.io/reservation"
+    value: "sense"
+    operator: "Equal"
+    effect: "NoSchedule"
 conveyorReceiver:
   threads: 1
   podAnnotations: {}
@@ -192,8 +190,8 @@ conveyorReceiver:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 conveyorThrottler:
@@ -205,8 +203,8 @@ conveyorThrottler:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 conveyorPreparer:
@@ -215,20 +213,18 @@ conveyorPreparer:
   bulk: 1000
   resources:
     limits:
-      memory: "8Gi"
-      cpu: "8.0"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "2Gi"
-      cpu: "2.0"
-  tolerations:
-  - key: "nautilus.io/stashcache"
-    operator: "Exists"
-    effect: "NoSchedule"
+      memory: "1Gi"
+      cpu: "1.0"
   nodeSelector:
-    "kubernetes.io/hostname": "stashcache.t2.ucsd.edu"
-  
-
-
+    kubernetes.io/hostname: "ucsd-nrp.cern.ch"
+  tolerations:
+  - key: "nautilus.io/reservation"
+    value: "sense"
+    operator: "Equal"
+    effect: "NoSchedule"
 darkReaper:
   workers: 1
   chunkSize: "10"
@@ -242,8 +238,8 @@ darkReaper:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 hermes:
@@ -257,8 +253,8 @@ hermes:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 hermes2:
@@ -270,8 +266,8 @@ hermes2:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 judgeCleaner:
@@ -282,8 +278,8 @@ judgeCleaner:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 judgeEvaluator:
@@ -294,8 +290,8 @@ judgeEvaluator:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 judgeInjector:
@@ -306,8 +302,8 @@ judgeInjector:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 judgeRepairer:
@@ -318,8 +314,8 @@ judgeRepairer:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 oauthManager:
@@ -327,11 +323,11 @@ oauthManager:
   podAnnotations: {}
   resources:
     limits:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 undertaker:
@@ -342,8 +338,8 @@ undertaker:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 reaper:
@@ -357,8 +353,8 @@ reaper:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 transmogrifier:
@@ -371,8 +367,8 @@ transmogrifier:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 tracerKronos:
@@ -383,8 +379,8 @@ tracerKronos:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "200Mi"
-      cpu: "700m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 minos:
@@ -395,8 +391,8 @@ minos:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "100Mi"
-      cpu: "100m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 minosTemporaryExpiration:
@@ -407,8 +403,8 @@ minosTemporaryExpiration:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "100Mi"
-      cpu: "100m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 necromancer:
@@ -418,8 +414,8 @@ necromancer:
       memory: "1Gi"
       cpu: "1.0"
     requests:
-      memory: "100Mi"
-      cpu: "100m"
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 ftsRenewal:
@@ -441,11 +437,11 @@ ftsRenewal:
       value: "new_userkey.pem"
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      cpu: 100m
-      memory: 256Mi
+      memory: "1Gi"
+      cpu: "1.0"
   
 
 automaticRestart:
@@ -461,11 +457,11 @@ automaticRestart:
   selectorLabel: "app-group=rucio-daemons"
   resources:
     limits:
-      cpu: 500m
-      memory: 256Mi
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      cpu: 100m
-      memory: 128Mi
+      memory: "1Gi"
+      cpu: "1.0"
 
 additionalSecrets:
   # gcssecret:
@@ -529,7 +525,7 @@ config:
     lfn2pfn_algorithm_default: "identity"
   
   dmm:
-    url: "http://dmm.nrp-nautilus.io"
+    url: "http://dmm-dev.nrp-nautilus.io"
     use_sense: "true"
 
   conveyor:

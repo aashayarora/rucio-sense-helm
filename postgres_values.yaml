@@ -13,15 +13,16 @@ primary:
     shared_buffers = 1024MB
   resources:
     limits:
-      memory: "8Gi"
-      cpu: "2"
+      memory: "1Gi"
+      cpu: "1.0"
     requests:
-      memory: "4Gi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "1.0"
   nodeSelector:
-    kubernetes.io/hostname: stashcache.t2.ucsd.edu  
+    kubernetes.io/hostname: ucsd-nrp.cern.ch 
   tolerations:
-    - key: "nautilus.io/stashcache"
-      operator: "Exists"
+    - key: "nautilus.io/reservation"
+      value: "sense"
+      operator: "Equal"
       effect: "NoSchedule"
 

@@ -11,9 +11,10 @@ spec:
   template:
     spec:
       tolerations:
-      - key: "nautilus.io/stashcache"
-        operator: "Exists"
-        effect: "NoSchedule"
+        - key: "nautilus.io/reservation"
+          value: "sense"
+          operator: "Equal"
+          effect: "NoSchedule"
       restartPolicy: Never
       initContainers:
       - name: postgres-ready
@@ -69,4 +70,4 @@ spec:
             - name: RUCIO_PRINT_CFG
               value: "true"
       nodeSelector:
-        kubernetes.io/hostname: stashcache.t2.ucsd.edu
+        kubernetes.io/hostname: ucsd-nrp.cern.ch

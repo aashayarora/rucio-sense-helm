@@ -38,12 +38,10 @@ additionalEnvs:
     value: "True"
 
 tolerations:
-  - key: "nautilus.io/stashcache"
-    operator: "Exists"
+  - key: "nautilus.io/reservation"
+    value: "sense"
+    operator: "Equal"
     effect: "NoSchedule"
-
-nodeSelector:
-  kubernetes.io/hostname: stashcache.t2.ucsd.edu
 
 service:
   type: ClusterIP
@@ -150,7 +148,8 @@ ftsRenewal:
     requests:
       cpu: 100m
       memory: 256Mi
-  
+  nodeSelector:
+    kubernetes.io/hostname: ucsd-nrp.cern.ch
 
 automaticRestart:
   enabled: 1
@@ -318,7 +317,7 @@ config:
     scheme: "srm,gsiftp,root,http,https"
     transfertool: "fts3"
     sense: "true"
-    dmm_host: "dmm.nrp-nautilus.io"
+    dmm_host: "dmm-dev.nrp-nautilus.io"
     ftshosts: "https://cmsftssrv3.fnal.gov:8446, https://fts3-pilot.cern.ch:8446"
     cacert: "/opt/certs/ca.pem"
     usercert: "/opt/proxy/x509up"
@@ -382,18 +381,18 @@ config:
 
 serverResources:
   limits:
-    cpu: 8
-    memory: 4Gi
+    cpu: 1
+    memory: 1Gi
   requests:
-    cpu: 100m
-    memory: 2Gi
+    cpu: 1
+    memory: 1Gi
 authServerResources:
   limits:
-    cpu: 2
-    memory: 4Gi
+    cpu: 1
+    memory: 1Gi
   requests:
     #cpu: 100m
-    cpu: 100m
+    cpu: 1
     memory: 1Gi
 traceServerResources: {}
   # limits:
@@ -403,4 +402,4 @@ traceServerResources: {}
   #  cpu: 100m
   #  memory: 128Mi
 
-nodeSelector: {}
+nodeSelector: {kubernetes.io/hostname: ucsd-nrp.cern.ch}

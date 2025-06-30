@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+from rucio.client import Client
+
+import random
+import string
+from tqdm import tqdm
+
+client = Client()
+
+datasets = {
+    "T2_US_SDSC": "65000,74000", 
+    "T2_US_Caltech": "170000,180000", 
+    "T2_US_Caltech_Test": "105000,115000", 
+    "T1_US_FNAL": "50000,59000", 
+    "T2_US_Nebraska": "130000,140000"
+}
+
+containers = {
+    "T2_US_SDSC": "SDSC",
+    "T2_US_Caltech": "CALTECH",
+    "T2_US_Caltech_Test": "CALTECHTEST",
+    "T1_US_FNAL": "FNAL",
+    "T2_US_Nebraska": "NEBRASKA"
+}
+
+registered_rses = [site["rse"] for site in client.list_rses()]
+
+for source in datasets:
+    if source not in registered_rses:
+        print(f"Skipping {source} as it is not registered in Rucio.")
+        continue
+    print(f"Adding datasets for site: {source}")
+    DATASET = datasets[source]
+    dataset_start, dataset_end = int(DATASET.split(",")[0]), int(DATASET.split(",")[1])+1000
+    datasets_for_containers = []
+    for dataset in tqdm(range(dataset_start, dataset_end, 1000)):
+        tqdm.write(f"Adding dataset: {dataset}")
+        files = [f"/store/data/Run2018A/EGamma/MINIAOD/UL2018_MiniAODv2-v1/{dataset}/testSourceFile{j}.root" for j in range(1000)]
+        dids = [{"scope": "cms", "name": f} for f in files]
+        dids_w_bytes = [{"scope": "cms", "name": f, "bytes": 4294967296} for f in files]
+        try:
+            client.add_replicas(source, dids_w_bytes)
+            client.add_dataset("cms", f"/SenseTest/Run2022-03Jan2023/MYDATA#{dataset}")
+            client.add_files_to_datasets([{"scope": "cms", "name": f"/SenseTest/Run2022-03Jan2023/MYDATA#{dataset}", "dids": dids}])
+        except Exception as e:
+            tqdm.write(f"Error adding dataset {dataset}: {e}")
+            continue # ignore if file already exists
+
+        # Add dataset to the list for the container
+        try:
+            datasets_for_containers.append({"scope": "cms", "name": f"/SenseTest/Run2022-03Jan2023/MYDATA#{dataset}"})
+        except Exception as e:
+            tqdm.write(f"Error adding dataset {dataset} to container list: {e}")
+            continue
+
+    random.shuffle(datasets_for_containers)
+
+    print("Adding datasets to container")
+    try:
+        client.add_container("cms", f"/SenseTest/Run3/{containers[source]}")
+        client.add_datasets_to_containers([{"scope": "cms", "name": f"/SenseTest/Run3/{containers[source]}", "dids": datasets_for_containers}])
+    except Exception as e:
+        print(f"Error adding datasets to container {containers[source]}: {e}")
+        continue

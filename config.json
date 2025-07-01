@@ -1,0 +1,48 @@
+{
+  "T2_US_SDSC": {
+    "hostname": "xrootd-sense-ucsd-redirector-111.sdsc.optiputer.net",
+    "scheme": "davs",
+    "port": 1094,
+    "prefix": "//temp",
+    "datasets": "65000,74000",
+    "containers": "SDSC"
+  },
+  "T2_US_Caltech": {
+    "hostname": "redir-01.t2-sense.ultralight.org",
+    "scheme": "davs",
+    "port": 1094,
+    "prefix": "//store/group/tests-sense",
+    "datasets": "170000,180000",
+    "containers": "CALTECH"
+  },
+  "T2_US_Caltech_Test": {
+    "hostname": "redir-01.t2-sense.ultralight.org",
+    "scheme": "davs",
+    "port": 1094,
+    "prefix": "//store/group/tests-sense",
+    "datasets": "105000,115000",
+    "containers": "CALTECHTEST"
+  },
+  "T1_US_FNAL": {
+    "hostname": "cmssense5-origin-2842-1.fnal.gov",
+    "scheme": "davs",
+    "port": 2880,
+    "prefix": "//dcache/store/temp",
+    "datasets": "50000,59000",
+    "containers": "FNAL"
+  },
+  "T2_US_Nebraska": {
+    "hostname": "red-sense-dtn3-macvlan0.unl.edu",
+    "scheme": "davs",
+    "port": 1095,
+    "prefix": "//",
+    "datasets": "130000,140000",
+    "containers": "NEBRASKA"
+  },
+  "T2_US_MGHPCC": {
+    "hostname": "xrootd-0-redir.rnd.net2.mghpcc.org",
+    "scheme": "davs",
+    "port": 1094,
+    "prefix": "//"
+  }
+}

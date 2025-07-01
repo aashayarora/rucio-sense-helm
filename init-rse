@@ -1,83 +1,118 @@
 #!/usr/bin/env python3
 
 from rucio.client import Client
-import itertools
+import json
+import random
+from tqdm import tqdm
+import argparse
+import sys
 
-client = Client()
+def initialize_rse(client, site_name, site_config):
+    site_info = site_config.copy()
+    site_info.update({
+        "impl": "rucio.rse.protocols.gfal.Default",
+        "domains": {
+            "lan": {"read": 1, "write": 1, "delete": 1},
+            "wan": {"read": 1, "write": 1, "delete": 1, "third_party_copy_read": 1, "third_party_copy_write": 1}
+        }
+    })
+    
+    client.add_rse(site_name)
+    client.add_protocol(site_name, site_info)
+    client.set_local_account_limit("root", site_name, "-1")
+    
+    client.add_rse_attribute(site_name, "fts", "https://cmsftssrv3.fnal.gov:8446")
+    client.add_rse_attribute(site_name, "lfn2pfn_algorithm", "cmstfc")
+    client.add_rse_attribute(site_name, "verify_checksum", "false")
 
-# add new sites to this dict, please use the same name (key) as configured in siterm
-sites = {
-    "T2_US_SDSC": {
-        "hostname": "xrootd-sense-ucsd-redirector-111.sdsc.optiputer.net",
-        "scheme": "davs",
-        "port": 1094,
-        "prefix": "//temp"
-    },
-    "T2_US_Caltech": {
-        "hostname": "redir-01.t2-sense.ultralight.org",
-        "scheme": "davs",
-        "port": 1094,
-        "prefix": "//store/group/tests-sense"
-    },
-    "T1_US_FNAL": {
-        "hostname": "cmssense5-origin-2842-1.fnal.gov",
-        "scheme": "davs",
-        "port": 2880,
-        "prefix": "//dcache/store/temp"
-    },
-    "T2_US_Nebraska": {
-        "hostname": "red-sense-dtn3-macvlan0.unl.edu",
-        "scheme": "davs",
-        "port": 1095,
-        "prefix": "//"
-    },
-    "T2_US_MGHPCC": {
-        "hostname": "xrootd-0-redir.rnd.net2.mghpcc.org",
-        "scheme": "davs",
-        "port": 1094,
-        "prefix": "//"
-    }
-}
+def add_distances(client, site_name, existing_sites):
+    distance_config = {"ranking": 1, "distance": 1}
+    registered_rses = [site["rse"] for site in client.list_rses()]
+    
+    for other_site in existing_sites:
+        if other_site != site_name and other_site in registered_rses:
+            try:
+                client.add_distance(site_name, other_site, distance_config)
+                client.add_distance(other_site, site_name, distance_config)
+            except Exception as e:
+                print(f"Error adding distance between {site_name} and {other_site}: {e}")
 
-### No change needed below this line ###
-for site in sites.values():
-    site.update({"impl": "rucio.rse.protocols.gfal.Default",
-                "domains": {
-                    "lan": {
-                        "read": 1,
-                        "write": 1,
-                        "delete": 1
-                    },
-                    "wan": {
-                        "read": 1,
-                        "write": 1,
-                        "delete": 1,
-                        "third_party_copy_read": 1,
-                        "third_party_copy_write": 1
-                    }
-                }})
+def create_datasets(client, site_name, site_config):
+    dataset_range = site_config["datasets"]
+    container_name = site_config["containers"]
+    
+    dataset_start, dataset_end = int(dataset_range.split(",")[0]), int(dataset_range.split(",")[1]) + 1000
+    datasets_for_containers = []
+    
+    for dataset in tqdm(range(dataset_start, dataset_end, 1000), desc=f"Processing {site_name}"):
+        files = [f"/store/data/Run2018A/EGamma/MINIAOD/UL2018_MiniAODv2-v1/{dataset}/testSourceFile{j}.root" 
+                for j in range(1000)]
+        dids = [{"scope": "cms", "name": f} for f in files]
+        dids_w_bytes = [{"scope": "cms", "name": f, "bytes": 4294967296} for f in files]
+        
+        try:
+            client.add_replicas(site_name, dids_w_bytes)
+            dataset_name = f"/SenseTest/Run2022-03Jan2023/MYDATA#{dataset}"
+            client.add_dataset("cms", dataset_name)
+            client.add_files_to_datasets([{"scope": "cms", "name": dataset_name, "dids": dids}])
+            datasets_for_containers.append({"scope": "cms", "name": dataset_name})
+        except Exception as e:
+            tqdm.write(f"Error adding dataset {dataset}: {e}")
+    
+    if datasets_for_containers:
+        random.shuffle(datasets_for_containers)
+        container_name_full = f"/SenseTest/Run3/{container_name}"
+        client.add_container("cms", container_name_full)
+        client.add_datasets_to_containers([{
+            "scope": "cms", 
+            "name": container_name_full, 
+            "dids": datasets_for_containers
+        }])
+        print(f"Created container {container_name_full} with {len(datasets_for_containers)} datasets")
 
-for site, site_info in sites.items():
+def process_site(client, site_name, site_config, processed_sites):
+    print(f"\n=== Processing {site_name} ===")
+    
     try:
-        print(f"Adding {site}")
-        client.add_rse(site)
-        client.add_protocol(site, site_info)
-        client.set_local_account_limit("root", site, "-1")
-        client.add_rse_attribute(site, "fts", "https://cmsftssrv3.fnal.gov:8446")
-        client.add_rse_attribute(site, "lfn2pfn_algorithm", "cmstfc")
-        client.add_rse_attribute(site, "verify_checksum", "false")
+        initialize_rse(client, site_name, site_config)
+        print(f"Initialized RSE: {site_name}")
+        
+        add_distances(client, site_name, processed_sites)
+        
+        if "datasets" in site_config and "containers" in site_config:
+            create_datasets(client, site_name, site_config)
+        else:
+            print(f"No datasets configured for {site_name}")
+            
+        return True
     except Exception as e:
-        print(e)
-        continue
+        print(f"Error processing {site_name}: {e}")
+        return False
 
-iterator = itertools.combinations(sites.keys(), 2)
-for src, dst in iterator:
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Initialize Rucio RSEs and add datasets")
+    parser.add_argument("--config", default="config.json", help="Configuration file path")
+    args = parser.parse_args()
+    
+    with open(args.config, 'r') as f:
+        config = json.load(f)
+    
     try:
-        client.add_distance(src, dst, {"ranking": 1, "distance": 1})
-        client.add_distance(dst, src, {"ranking": 1, "distance": 1})
-    except:
-        continue
-
-client.add_scope("root", "cms")
-
-print(f"RSEs: {[i['rse'] for i in client.list_rses()]}")
+        client = Client()
+        print("Connected to Rucio")
+    except Exception as e:
+        print(f"Error connecting to Rucio: {e}")
+        sys.exit(1)
+    
+    try:
+        client.add_scope("root", "cms")
+        print("Added scope: cms")
+    except Exception as e:
+        print(f"Scope already exists: {e}")
+    
+    processed_sites = []
+    for site_name, site_config in config.items():
+        if process_site(client, site_name, site_config, processed_sites):
+            processed_sites.append(site_name)
+    
+    print(f"\nProcessed sites: {processed_sites}")

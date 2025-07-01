@@ -22,4 +22,3 @@ sleep 50
 ./helm_install_daemons
 
 ./init-rse
-./add-datasets

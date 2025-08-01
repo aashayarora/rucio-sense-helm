@@ -20,5 +20,3 @@ kubectl -n ucsd-rucio apply -f init-db-schema-job.yaml
 sleep 50
 ./helm_install_server &
 ./helm_install_daemons
-
-./init-rse

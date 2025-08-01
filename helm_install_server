@@ -23,6 +23,7 @@ Help()
 ############################################################
 # Main                                                     #
 ############################################################
+namespace="ucsd-rucio"
 server_deploy_name="rucio-server"
 server_helm_chart="rucio/rucio-server"
 server_values_yaml="server_values.yaml"
@@ -58,7 +59,7 @@ fi
 
 # Create secret for FTS cert
 USERCERT=$(base64 -w0 secrets/usercert.pem)
-cat << EOF | kubectl apply -f -
+cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   usercert.pem: ${USERCERT}
@@ -70,7 +71,7 @@ EOF
 
 # Create secret for FTS key
 USERKEY=$(base64 -w0 secrets/userkey.pem)
-cat << EOF | kubectl apply -f -
+cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   new_userkey.pem: ${USERKEY}
@@ -81,19 +82,19 @@ type: Opaque
 EOF
 
 # Extract db secrets for server deployment
-database_default=$(kubectl get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-cfg-database-default}' | base64 -d)
-schema=$(kubectl get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-db-schema}' | base64 -d)
+database_default=$(kubectl -n ${namespace} get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-cfg-database-default}' | base64 -d)
+schema=$(kubectl -n ${namespace} get secrets rucio-db-init-secrets  -o jsonpath='{.data.rucio-db-schema}' | base64 -d)
 
 ### Deploy Helm chart ###
 if ! helm status ${server_deploy_name} &> /dev/null; then
   # Helm install rucio server
   echo "Installing Rucio server helm chart:"
-  helm install ${server_deploy_name} ${server_helm_chart} -f ${server_values_yaml} \
+  helm -n ${namespace} install ${server_deploy_name} ${server_helm_chart} -f ${server_values_yaml} \
     --set config.database.default=${database_default} --set config.database.schema=${schema} \
     --version 1.30.13
 else
   echo "Upgrading Rucio server helm chart:"
-  helm upgrade ${server_deploy_name} ${server_helm_chart} -f ${server_values_yaml} \
+  helm -n ${namespace} upgrade ${server_deploy_name} ${server_helm_chart} -f ${server_values_yaml} \
     --set config.database.default=${database_default} --set config.database.schema=${schema} \
     --version 1.30.13
 fi

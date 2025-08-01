@@ -43,6 +43,8 @@
     "hostname": "xrootd-0-redir.rnd.net2.mghpcc.org",
     "scheme": "davs",
     "port": 1094,
-    "prefix": "//"
+    "prefix": "//",
+    "datasets": "65000,74000",
+    "containers": "MGHPCC"
   }
 }

@@ -6,6 +6,8 @@ import random
 from tqdm import tqdm
 import argparse
 import sys
+import itertools
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def initialize_rse(client, site_name, site_config):
     site_info = site_config.copy()
@@ -25,17 +27,13 @@ def initialize_rse(client, site_name, site_config):
     client.add_rse_attribute(site_name, "lfn2pfn_algorithm", "cmstfc")
     client.add_rse_attribute(site_name, "verify_checksum", "false")
 
-def add_distances(client, site_name, existing_sites):
+def add_distances(client, sites):
     distance_config = {"ranking": 1, "distance": 1}
-    registered_rses = [site["rse"] for site in client.list_rses()]
-    
-    for other_site in existing_sites:
-        if other_site != site_name and other_site in registered_rses:
-            try:
-                client.add_distance(site_name, other_site, distance_config)
-                client.add_distance(other_site, site_name, distance_config)
-            except Exception as e:
-                print(f"Error adding distance between {site_name} and {other_site}: {e}")
+    iterator = itertools.combinations(sites, 2)
+    for src, dst in iterator:
+        print(f"Adding distance between {src} and {dst}")
+        client.add_distance(src, dst, distance_config)
+        client.add_distance(dst, src, distance_config)
 
 def create_datasets(client, site_name, site_config):
     dataset_range = site_config["datasets"]
@@ -77,10 +75,13 @@ def process_site(client, site_name, site_config, processed_sites):
         initialize_rse(client, site_name, site_config)
         print(f"Initialized RSE: {site_name}")
         
-        add_distances(client, site_name, processed_sites)
-        
+    except Exception as e:
+        print(f"Error initializing RSE or adding distances for {site_name}: {e}")
+    
+    try:
         if "datasets" in site_config and "containers" in site_config:
             create_datasets(client, site_name, site_config)
+            pass
         else:
             print(f"No datasets configured for {site_name}")
             
@@ -110,9 +111,21 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"Scope already exists: {e}")
     
-    processed_sites = []
-    for site_name, site_config in config.items():
-        if process_site(client, site_name, site_config, processed_sites):
-            processed_sites.append(site_name)
+    with ThreadPoolExecutor(max_workers=12) as executor:
+        futures = {}
+        processed_sites = []
+        
+        for site_name, site_config in config.items():
+            futures[executor.submit(process_site, client, site_name, site_config, processed_sites)] = site_name
+        
+        for future in as_completed(futures):
+            site_name = futures[future]
+            try:
+                if future.result():
+                    processed_sites.append(site_name)
+            except Exception as e:
+                print(f"Error processing {site_name} in thread: {e}")
     
+    add_distances(client, processed_sites)
+
     print(f"\nProcessed sites: {processed_sites}")

@@ -27,6 +27,7 @@ Help()
 ############################################################
 # Main                                                     #
 ############################################################
+namespace="ucsd-rucio"
 rucio_db_name="rucio"
 rucio_db_user="rucio"
 rucio_db_schema="prod"
@@ -61,7 +62,7 @@ while getopts "h:n:u:d:c:v:" option; do
  done
 
 # Check for existing postgres deployment
-if helm status ${postgres_deploy_name} &> /dev/null; then
+if helm -n ${namespace} status ${postgres_deploy_name} &> /dev/null; then
   echo "Warning: postgreSQL deployment: ${postgres_deploy_name} already exists"
   echo "...Will apply upgrade"
 fi
@@ -97,7 +98,7 @@ grant_user_privileges=$(echo "GRANT ALL PRIVILEGES ON DATABASE ${rucio_db_name} 
 ######################################
 
 # Generate initdb secret
-cat << EOF | kubectl apply -f -
+cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   create-rucio-db.sql: $(echo ${create_rucio_db} | base64)
@@ -110,7 +111,7 @@ type: Opaque
 EOF
 
 # Generate user/password secret for init pod
-cat << EOF | kubectl apply -f -
+cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   rucio-cfg-database-default: $(echo postgresql://${rucio_db_user}:${rucio_db_pwd}@${postgres_deploy_name}-postgresql/${rucio_db_name} | base64)
@@ -131,13 +132,13 @@ EOF
 # Deploy postgres                    #
 ######################################
 
-if ! helm status ${postgres_deploy_name} &> /dev/null; then
+if ! helm -n ${namespace} status ${postgres_deploy_name} &> /dev/null; then
   # Helm install postgres
-  echo "Installing Postgres helm chart:"
-  helm install ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
+  echo "Installing Postgres helm -n ${namespace} chart:"
+  helm -n ${namespace} install ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
 else
-  echo "Upgrading Postgres helm chart:"
-  helm upgrade ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
+  echo "Upgrading Postgres helm -n ${namespace} chart:"
+  helm -n ${namespace} upgrade ${postgres_deploy_name} ${postgres_helm_chart} -f ${postgres_values_yaml}
 fi
 
 

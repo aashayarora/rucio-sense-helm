@@ -64,8 +64,14 @@ fi
 
 
 # Create secret for FTS cert
-USERCERT=$(base64 -w0 secrets/usercert.pem)
-cat << EOF | kubectl -n ${namespace} apply -f -
+if [ -f "secrets/usercert.pem" ]; then
+    if [ "$(uname)" = "Darwin" ]; then
+        USERCERT=$(base64 -i secrets/usercert.pem)
+    else
+        USERCERT=$(base64 -w0 < secrets/usercert.pem)
+    fi
+
+    cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   usercert.pem: ${USERCERT}
@@ -74,10 +80,23 @@ metadata:
   name: ${daemons_deploy_name}-fts-cert
 type: Opaque
 EOF
+elif kubectl -n ${namespace} get secret ${daemons_deploy_name}-fts-cert >/dev/null 2>&1; then
+    echo "Secret ${daemons_deploy_name}-fts-cert already exists in namespace ${namespace}, continuing..."
+else
+    echo "Error: secrets/usercert.pem file not found and secret ${daemons_deploy_name}-fts-cert does not exist in Kubernetes"
+    exit 1
+fi
 
 # Create secret for FTS key
-USERKEY=$(base64 -w0 secrets/userkey.pem)
-cat << EOF | kubectl -n ${namespace} apply -f -
+if [ -f "secrets/userkey.pem" ]; then
+    # Check OS for correct base64 command
+    if [ "$(uname)" = "Darwin" ]; then
+        USERKEY=$(base64 -i secrets/userkey.pem)
+    else
+        USERKEY=$(base64 -w0 < secrets/userkey.pem)
+    fi
+
+    cat << EOF | kubectl -n ${namespace} apply -f -
 apiVersion: v1
 data:
   new_userkey.pem: ${USERKEY}
@@ -86,6 +105,13 @@ metadata:
   name: ${daemons_deploy_name}-fts-key
 type: Opaque
 EOF
+elif kubectl -n ${namespace} get secret ${daemons_deploy_name}-fts-key >/dev/null 2>&1; then
+    echo "Secret ${daemons_deploy_name}-fts-key already exists in namespace ${namespace}, continuing..."
+else
+    echo "Error: secrets/userkey.pem file not found and secret ${daemons_deploy_name}-fts-key does not exist in Kubernetes"
+    exit 1
+fi
+
 
 # FIXME Add CA bundler job
 
